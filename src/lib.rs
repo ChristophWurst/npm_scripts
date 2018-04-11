@@ -23,7 +23,8 @@ pub struct NpmScripts {
 
 impl NpmScripts {
     pub fn new<P>(path: P) -> Self
-        where P: Into<PathBuf>
+    where
+        P: Into<PathBuf>,
     {
         NpmScripts { path: path.into() }
     }
@@ -36,6 +37,17 @@ impl NpmScripts {
         if !self.is_available() {
             bail!("no package.json found");
         }
+        Ok(())
+    }
+
+    pub fn install(&self) -> Result<(), Error> {
+        self.ensure_available()?;
+
+        Command::new("npm")
+            .arg("install")
+            .current_dir(&self.path)
+            .output()?;
+
         Ok(())
     }
 
@@ -100,6 +112,15 @@ mod tests {
     fn test_running_a_script() {
         let scripts = NpmScripts::new("./examples/ex3");
         let res = scripts.run_script("build");
+
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn it_installs_dependencies() {
+        let scripts = NpmScripts::new("./examples/ex4");
+
+        let res = scripts.install();
 
         assert!(res.is_ok());
     }
