@@ -1,6 +1,6 @@
 [package]
 name = "npm_scripts"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "Check the availability of npm scripts and execute them"
 license-file = "LICENSE"
