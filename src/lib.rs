@@ -45,7 +45,7 @@ impl NpmScripts {
         Ok(parsed)
     }
 
-    pub fn has_script(&self, script: &String) -> Result<bool, Error> {
+    pub fn has_script(&self, script: &str) -> Result<bool, Error> {
         self.ensure_available()?;
 
         let cfg = self.get_package_cfg()?;
@@ -53,7 +53,7 @@ impl NpmScripts {
         Ok(cfg.scripts.is_some() && cfg.scripts.unwrap().contains_key(script))
     }
 
-    pub fn run_script(&self, script: &String) -> Result<(), Error> {
+    pub fn run_script(&self, script: &str) -> Result<(), Error> {
         self.ensure_available()?;
         if let Err(err) = self.has_script(script) {
             return Err(err);
@@ -83,7 +83,7 @@ mod tests {
     #[test]
     fn test_package_does_not_have_script() {
         let scripts = NpmScripts::new("./examples/ex1");
-        let has_some = scripts.has_script(&"build".to_owned()).unwrap();
+        let has_some = scripts.has_script("build").unwrap();
 
         assert!(!has_some);
     }
@@ -91,7 +91,7 @@ mod tests {
     #[test]
     fn test_package_has_script() {
         let scripts = NpmScripts::new("./examples/ex2");
-        let has_some = scripts.has_script(&"build".to_owned()).unwrap();
+        let has_some = scripts.has_script("build").unwrap();
 
         assert!(has_some);
     }
@@ -99,7 +99,7 @@ mod tests {
     #[test]
     fn test_running_a_script() {
         let scripts = NpmScripts::new("./examples/ex3");
-        let res = scripts.run_script(&"build".to_owned());
+        let res = scripts.run_script("build");
 
         assert!(res.is_ok());
     }
