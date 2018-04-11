@@ -17,39 +17,55 @@ struct NpmPackageConfig {
     scripts: Option<HashMap<String, String>>,
 }
 
-fn get_package_cfg(path: &PathBuf) -> Result<NpmPackageConfig, Error> {
-    let mut file = File::open(path)?;
-    let parsed = serde_json::from_reader(&mut file)?;
-    Ok(parsed)
+pub struct NpmScripts {
+    path: PathBuf,
 }
 
-pub fn has_scripts(path: &PathBuf) -> Result<bool, Error> {
-    let cfg = get_package_cfg(path)?;
-
-    Ok(cfg.scripts.is_some() && !cfg.scripts.unwrap().is_empty())
-}
-
-pub fn has_script(path: &PathBuf, script: &String) -> Result<bool, Error> {
-    let path = path.join("package.json");
-    if !path.exists() {
-        format_err!("no package.json found at {:?}", path);
+impl NpmScripts {
+    pub fn new<P>(path: P) -> Self
+        where P: Into<PathBuf>
+    {
+        NpmScripts { path: path.into() }
     }
 
-    let cfg = get_package_cfg(&path)?;
-
-    Ok(cfg.scripts.is_some() && cfg.scripts.unwrap().contains_key(script))
-}
-
-pub fn run_script(path: &PathBuf, script: &String) -> Result<(), Error> {
-    if let Err(err) = has_script(&path, script) {
-        return Err(err);
+    pub fn is_available(&self) -> bool {
+        self.path.exists()
     }
-    Command::new("npm")
-        .arg("run")
-        .arg(script)
-        .current_dir(&path)
-        .output()?;
-    Ok(())
+
+    fn ensure_available(&self) -> Result<(), Error> {
+        if !self.is_available() {
+            bail!("no package.json found");
+        }
+        Ok(())
+    }
+
+    fn get_package_cfg(&self) -> Result<NpmPackageConfig, Error> {
+        let mut file = File::open(&self.path.join("package.json"))?;
+        let parsed = serde_json::from_reader(&mut file)?;
+        Ok(parsed)
+    }
+
+    pub fn has_script(&self, script: &String) -> Result<bool, Error> {
+        self.ensure_available()?;
+
+        let cfg = self.get_package_cfg()?;
+
+        Ok(cfg.scripts.is_some() && cfg.scripts.unwrap().contains_key(script))
+    }
+
+    pub fn run_script(&self, script: &String) -> Result<(), Error> {
+        self.ensure_available()?;
+        if let Err(err) = self.has_script(script) {
+            return Err(err);
+        }
+
+        Command::new("npm")
+            .arg("run")
+            .arg(script)
+            .current_dir(&self.path)
+            .output()?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -58,44 +74,32 @@ mod tests {
 
     #[test]
     fn it_detects_missing_package_json() {
-        let has_some = has_scripts(&PathBuf::from("./examples"));
+        let scripts = NpmScripts::new("./examples");
+        let has_some = scripts.has_script(&"build".to_owned());
 
         assert!(has_some.is_err());
     }
 
     #[test]
-    fn it_reads_package_file_without_scripts() {
-        let has_some = has_scripts(&PathBuf::from("./examples/contacts.package.json")).unwrap();
+    fn test_package_does_not_have_script() {
+        let scripts = NpmScripts::new("./examples/ex1");
+        let has_some = scripts.has_script(&"build".to_owned()).unwrap();
 
         assert!(!has_some);
-    }
-
-    #[test]
-    fn it_reads_package_file_with_scripts() {
-        let has_some = has_scripts(&PathBuf::from("./examples/mail.package.json")).unwrap();
-
-        assert!(has_some);
     }
 
     #[test]
     fn test_package_has_script() {
-        let has_some = has_script(&PathBuf::from("./examples"), &"build".to_owned()).unwrap();
+        let scripts = NpmScripts::new("./examples/ex2");
+        let has_some = scripts.has_script(&"build".to_owned()).unwrap();
 
         assert!(has_some);
     }
 
     #[test]
-    fn test_package_does_not_have_script() {
-        let has_some = has_script(&PathBuf::from("./examples"), &"blockchain".to_owned()).unwrap();
-
-        assert!(!has_some);
-    }
-
-    #[test]
     fn test_running_a_script() {
-        let res = run_script(&PathBuf::from("./examples"), &"build".to_owned());
-
-        println!("{:?}", res);
+        let scripts = NpmScripts::new("./examples/ex3");
+        let res = scripts.run_script(&"build".to_owned());
 
         assert!(res.is_ok());
     }
