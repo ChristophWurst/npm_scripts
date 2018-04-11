@@ -2,6 +2,9 @@
 name = "npm_scripts"
 version = "0.1.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
+description = "Check the availability of npm scripts and execute them"
+license-file = "LICENSE"
+keywords = ["npm"]
 
 [dependencies]
 failure = "0.1.1"
