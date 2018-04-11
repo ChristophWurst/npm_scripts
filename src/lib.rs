@@ -23,14 +23,13 @@ pub struct NpmScripts {
 
 impl NpmScripts {
     pub fn new<P>(path: P) -> Self
-    where
-        P: Into<PathBuf>,
+        where P: Into<PathBuf>
     {
         NpmScripts { path: path.into() }
     }
 
     pub fn is_available(&self) -> bool {
-        self.path.exists()
+        self.path.join("package.json").exists()
     }
 
     fn ensure_available(&self) -> Result<(), Error> {
@@ -83,6 +82,24 @@ impl NpmScripts {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn it_detects_package_json_absence() {
+        let scripts = NpmScripts::new("./examples");
+
+        let available = scripts.is_available();
+
+        assert!(!available);
+    }
+
+    #[test]
+    fn it_detects_package_json_availability() {
+        let scripts = NpmScripts::new("./examples/ex1");
+
+        let available = scripts.is_available();
+
+        assert!(available);
+    }
 
     #[test]
     fn it_detects_missing_package_json() {
