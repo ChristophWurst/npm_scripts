@@ -1,9 +1,7 @@
 #[macro_use]
 extern crate failure;
-extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
 
 use std::collections::HashMap;
 use std::fs::File;

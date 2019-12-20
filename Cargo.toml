@@ -1,10 +1,11 @@
 [package]
 name = "npm_scripts"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "Check the availability of npm scripts and execute them"
 license-file = "LICENSE"
 keywords = ["npm"]
+edition = "2018"
 
 [dependencies]
 failure = "0.1.1"
