@@ -1,40 +1,8 @@
 {
-  "name": "files_recommendation",
-  "version": "0.4.0",
-  "description": "Shows recommended files in Nextcloud",
-  "main": "index.js",
+  "name": "example-app-1",
+  "version": "1.0.0",
   "scripts": {
-    "dev": "webpack --progress --watch --config src/webpack.dev.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ChristophWurst/files_recommendation.git"
-  },
-  "author": "Christoph Wurst",
-  "license": "AGPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/ChristophWurst/files_recommendation/issues"
-  },
-  "homepage": "https://github.com/ChristophWurst/files_recommendation#readme",
-  "dependencies": {
-    "nextcloud-axios": "^0.2.1",
-    "nextcloud-server": "^0.15.10",
-    "vue": "^2.6.10",
-    "vuex": "^3.1.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/preset-env": "^7.7.1",
-    "babel-loader": "^8.0.6",
-    "css-loader": "^3.3.0",
-    "node-sass": "^9.0.0",
-    "sass-loader": "^7.3.1",
-    "vue-loader": "^15.7.2",
-    "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-merge": "^4.2.2"
+    "dev": "echo dev",
+    "test": "echo test"
   }
 }
