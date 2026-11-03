@@ -1,6 +1,6 @@
 [package]
 name = "npm_scripts"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "Check the availability of npm scripts and execute them"
 license-file = "LICENSE"
@@ -8,7 +8,7 @@ keywords = ["npm"]
 edition = "2018"
 
 [dependencies]
-failure = "0.1.1"
+anyhow = "1"
 serde = "^1.0"
 serde_derive = "^1.0"
 serde_json = "^1.0"

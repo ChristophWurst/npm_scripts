@@ -1,6 +1,4 @@
 #[macro_use]
-extern crate failure;
-#[macro_use]
 extern crate serde_derive;
 
 use std::collections::HashMap;
@@ -8,7 +6,7 @@ use std::fs::File;
 use std::path::PathBuf;
 use std::process::Command;
 
-use failure::Error;
+use anyhow::{bail, Error};
 
 #[derive(Deserialize)]
 struct NpmPackageConfig {
